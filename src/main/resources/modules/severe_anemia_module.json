@@ -1,0 +1,177 @@
+{
+  "name": "Severe Anemia - Clinical Trial",
+  "remarks": [
+    "Module representing severe anemia for a clinical trial with drug exposure and adverse events."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Severe_Anemia_Diagnosis"
+    },
+    "Severe_Anemia_Diagnosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "123456",
+          "display": "Severe Anemia"
+        }
+      ],
+      "direct_transition": "Treatment_Assignment"
+    },
+    "Treatment_Assignment": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Iron_Supplements",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Erythropoietin_ESA",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Blood_Transfusion",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Iron_Supplements": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1111",
+          "display": "Oral Iron Supplements"
+        }
+      ],
+      "direct_transition": "Iron_AE_Check"
+    },
+    "Iron_AE_Check": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "GI_Side_Effects",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Improvement",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Erythropoietin_ESA": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "2222",
+          "display": "Erythropoietin"
+        }
+      ],
+      "direct_transition": "ESA_AE_Check"
+    },
+    "ESA_AE_Check": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Hypertension",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Improvement",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Blood_Transfusion": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "3333",
+          "display": "Blood Transfusion"
+        }
+      ],
+      "direct_transition": "Transfusion_AE_Check"
+    },
+    "Transfusion_AE_Check": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Iron_Overload",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Improvement",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "GI_Side_Effects": {
+      "type": "Symptom",
+      "symptom": "Gastrointestinal Side Effects",
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Followup"
+    },
+    "Hypertension": {
+      "type": "Symptom",
+      "symptom": "Hypertension",
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Followup"
+    },
+    "Iron_Overload": {
+      "type": "Symptom",
+      "symptom": "Iron Overload",
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Followup"
+    },
+    "Improvement": {
+      "type": "ConditionEnd",
+      "referenced_by_attribute": "anemia",
+      "direct_transition": "Followup"
+    },
+    "Followup": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Full_Recovery",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Chronic_Anemia",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.1
+        }
+      ]
+    },
+    "Full_Recovery": {
+      "type": "ConditionEnd",
+      "direct_transition": "Terminal"
+    },
+    "Chronic_Anemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "654321",
+          "display": "Chronic Anemia"
+        }
+      ],
+      "direct_transition": "Terminal"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    }
+  },
+  "gmf_version": 1
+}
