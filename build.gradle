@@ -424,3 +424,8 @@ signing {
   required { project.hasProperty('signing.keyId') }
   sign publishing.publications.synthea
 }
+test {
+    maxHeapSize = "2g"
+    timeout = Duration.ofMinutes(10) // Optional: prevent infinite test runs
+    maxParallelForks = 1 // Optional: reduce parallel execution
+}
